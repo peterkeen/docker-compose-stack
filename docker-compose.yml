@@ -6,7 +6,7 @@ services:
     image: hashicorp/http-echo
     ports:
       - "5678:5678"
-    command: "-text=foobar"
+    command: "-text=foobarbaz"
   watchtower:
     image: containrrr/watchtower:latest
     environment:
