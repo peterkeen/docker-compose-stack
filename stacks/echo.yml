@@ -1,0 +1,6 @@
+services:
+  http-echo:
+    image: hashicorp/http-echo
+    ports:
+      - "5678:5678"
+    command: "-text=foobarbaz"
