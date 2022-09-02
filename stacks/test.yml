@@ -1,0 +1,16 @@
+services:
+  testroot:
+    image: s6on/alpine
+    command: "s6-pause"
+    environment:
+      - SOME_SECRET
+      - SOME_OTHER_SECRET
+
+  testcron:
+    image: alpine
+    environment:
+      - HOSTNAME
+      - SOME_SECRET
+      - SOME_OTHER_SECRET
+    profiles:
+      - cron

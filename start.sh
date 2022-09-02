@@ -1,10 +1,13 @@
 #!/bin/sh
 
-echo "Determining stacks"
-stacks=$(yq '.hosts.martin.stacks // [] | map("-f stacks/" + . + ".yml") | join(" ")' hosts.yml)
+export HOSTNAME=$(cat /app/hostname)
 
-echo "Running compose"
-/usr/bin/docker-compose --ansi never -f docker-compose.yml $stacks up --no-color --remove-orphans --quiet-pull --detach
+echo "Loading secrets"
+if test -f /configs/secrets; then
+    . /configs/secrets
+fi
 
-echo "Pausing forever"
-s6-pause
+/app/run_compose.sh
+
+echo "Running cron"
+exec crond -f

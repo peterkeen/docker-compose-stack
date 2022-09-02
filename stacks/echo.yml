@@ -1,6 +1,12 @@
 services:
   http-echo:
     image: hashicorp/http-echo
+    environment:
+      - CONFIGS_SHA
     ports:
       - "5678:5678"
-    command: "-text=foobarbaz"
+    command: "-text=${HOSTNAME}"
+  cron-echo:
+    image: alpine
+    command: "echo ${SOMETHING_ELSE}"
+    profiles: ["cron"]
