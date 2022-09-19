@@ -7,6 +7,24 @@ The central conceit is that by using `watchtower` we can run the container built
 it, along with service containers, will be automatically updated. When this container is updated it will re-run
 `docker-compose up`, which will start new services and remove old services as needed.
 
+## Usage
+
+To use this thing, create a new GitHub repo and add a Dockerfile that looks like this:
+
+```
+FROM ghcr.io/peterkeen/docker-compose-stack:main
+COPY . /app
+```
+
+Now create a structure that looks like this:
+
+```
+hosts.yml
+stacks/
+configs/
+scripts/
+```
+
 ## Stacks
 
 The idea of stacks is that we can use one repo to deploy to multiple hosts.
@@ -37,7 +55,7 @@ Stacks are similar in concept to Compose's built-in `profiles` concept with the 
 
 ```bash
 $ mkdir /var/lib/docker/stack_configs
-$ docker run --init --restart=unless-stopped -d -i -v /var/lib/docker/stack_configs:/configs -v /var/run/docker.sock:/var/run/docker.sock -v /etc/hostname:/app/hostname:ro -e CONFIGS_DIR=/var/lib/docker/stack_configs --name dockerstack-root -l dockerstack-root ghcr.io/your-name/your-repo:main
+$ docker run --init --restart=unless-stopped -d -v /var/lib/docker/stack_configs:/configs -v /var/run/docker.sock:/var/run/docker.sock -v /etc/hostname:/app/hostname:ro -e CONFIGS_DIR=/var/lib/docker/stack_configs --name dockerstack-root -l dockerstack-root ghcr.io/your-name/your-repo:main
 ```
 
 ## Configs
