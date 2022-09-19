@@ -7,24 +7,6 @@ The central conceit is that by using `watchtower` we can run the container built
 it, along with service containers, will be automatically updated. When this container is updated it will re-run
 `docker-compose up`, which will start new services and remove old services as needed.
 
-## Usage
-
-1. Make a new empty GitHub repository for your stack config
-2. `git clone https://github.com/peterkeen/docker-compose-stack`
-3. `cd docker-compose-stack && git remote remove origin && git remote add origin git@github.com:yourusername/yourrepo.git`
-4. `git push origin main`
-
-On every host you want to use this on:
-
-```bash
-$ mkdir /var/lib/docker/stack_configs
-$ docker run --init --restart=unless-stopped -d -it -v /var/lib/docker/stack_configs:/configs -v /var/run/docker.sock:/var/run/docker.sock -v /etc/hostname:/app/hostname:ro -e CONFIGS_DIR=/var/lib/docker/stack_configs --name dockerstack-root -l dockerstack-root ghcr.io/yourusername/yourrepo:main
-```
-
-### Caveats
-
-* As written this only works on x86-64 linux. If you need to run in a different environment you'll need to update `Dockerfile` to pull the correct docker-compose release binary.
-
 ## Stacks
 
 The idea of stacks is that we can use one repo to deploy to multiple hosts.
@@ -50,6 +32,13 @@ hosts:
 Every stack listed for a host is added as a `-f` argument to the `docker-compose` invocation, which merges every file together using its ordinary merge logic.
 
 Stacks are similar in concept to Compose's built-in `profiles` concept with the important difference that if you remove a stack from a host those containers will be stopped and destroyed on next run.
+
+## First Run
+
+```bash
+$ mkdir /var/lib/docker/stack_configs
+$ docker run --init --restart=unless-stopped -d -i -v /var/lib/docker/stack_configs:/configs -v /var/run/docker.sock:/var/run/docker.sock -v /etc/hostname:/app/hostname:ro -e CONFIGS_DIR=/var/lib/docker/stack_configs --name dockerstack-root -l dockerstack-root ghcr.io/your-name/your-repo:main
+```
 
 ## Configs
 

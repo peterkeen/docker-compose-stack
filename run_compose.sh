@@ -10,9 +10,6 @@ for script in $scripts; do
     scripts/$script
 done
 
-echo "Determining stacks"
-stacks=$(yq '.hosts.[env(HOSTNAME)].stacks // [] | map("-f stacks/" + . + ".yml") | join(" ")' hosts.yml)
-
 echo "Copying configs"
 configs=$(yq '.hosts.[env(HOSTNAME)].configs // [] | map("configs/" + .) | join(" ")' hosts.yml)
 
@@ -28,11 +25,19 @@ printf "$envs" >> /app/.env
 echo "Calculating CONFIGS_SHA"
 export CONFIGS_SHA=$(tar --sort=name --owner=root:0 --group=root:0 --mtime='UTC 2022-01-01' -C / -cf - /configs /app/.env | sha256sum | cut -d' ' -f1)
 
+echo "Determining stacks"
+stacks=$(yq '.hosts.[env(HOSTNAME)].stacks // [] | map("-f stacks/" + . + ".yml") | join(" ")' hosts.yml)
+
 base_docker_compose="/usr/bin/docker-compose --ansi never -f docker-compose.yml $stacks"
 
 echo "Setting up crons"
 crons=$(yq ".hosts[env(HOSTNAME)].crons // [] | map(.schedule + \" cd /app && $base_docker_compose run --rm -T \" + .service + \" > /proc/1/fd/1 2>&1\") | join(\"\n\")" hosts.yml)
 echo "$crons" > /etc/cron.d/dockerstack
+echo "13 2 * * * docker image prune -f" > /etc/cron.d/dockerprune
 
 echo "Running compose"
-$base_docker_compose up --no-color --remove-orphans --quiet-pull --detach
+if [ -z "$1" ]; then
+    exec $base_docker_compose up --no-color --remove-orphans --quiet-pull --detach
+else
+    exec $base_docker_compose "$@"
+fi

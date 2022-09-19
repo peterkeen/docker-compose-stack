@@ -7,7 +7,9 @@ if test -f /configs/secrets; then
     . /configs/secrets
 fi
 
-/app/run_compose.sh
+/app/run_compose.sh "$@"
 
-echo "Running cron"
-exec crond -f
+if [ -z "$1" ]; then
+    echo "Running cron"
+    exec crond -f
+fi
