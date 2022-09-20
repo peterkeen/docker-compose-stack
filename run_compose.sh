@@ -34,6 +34,7 @@ echo "Setting up crons"
 crons=$(yq "(.defaults.crons // []) *+ (.hosts[env(HOSTNAME)].crons // []) | map(.schedule + \" cd /app && $base_docker_compose run --rm -T \" + .service + \" > /proc/1/fd/1 2>&1\") | join(\"\n\")" hosts.yml)
 echo "$crons" > /etc/cron.d/dockerstack
 echo "13 2 * * * docker image prune -f" > /etc/cron.d/dockerprune
+echo "*/5 * * * * docker exec dockerstack-root /run_compose.sh" > /etc/cron.d/redeploy
 
 echo "Running compose"
 if [ -z "$1" ]; then
