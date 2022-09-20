@@ -8,7 +8,9 @@ if test -f /configs/secrets; then
 fi
 
 if test -f /app/scripts/download_secrets.sh; then
-    . /app/scripts/download_secrets.sh
+    /app/scripts/download_secrets.sh > /config/download_secrets
+
+    . /config/download_secrets
 fi
 
 /app/run_compose.sh "$@"
