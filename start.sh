@@ -18,5 +18,5 @@ fi
 
 if [ -z "$1" ]; then
     echo "Running cron"
-    exec crond -f
+    exec crond -f -L -
 fi
