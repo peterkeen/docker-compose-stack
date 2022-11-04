@@ -2,6 +2,7 @@ services:
   watchtower:
     image: containrrr/watchtower:latest
     container_name: watchtower
+    restart: "always"
     environment:
       - "WATCHTOWER_POLL_INTERVAL=30"
     volumes:
