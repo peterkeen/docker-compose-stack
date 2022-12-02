@@ -16,7 +16,3 @@ fi
 
 /app/run_compose.sh "$@"
 
-if [ -z "$1" ]; then
-    echo "Running cron"
-    exec crond -f -L -
-fi
