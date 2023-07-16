@@ -1,9 +1,8 @@
-FROM alpine:3
+FROM docker:cli
 
-RUN apk update && apk add s6-portable-utils dcron tar yq docker
-ADD https://github.com/docker/compose/releases/download/v2.9.0/docker-compose-linux-x86_64 /usr/bin/docker-compose
-RUN chmod +x /usr/bin/docker-compose
+RUN apk update && apk add s6-portable-utils dcron tar yq
 RUN mkdir /app
+RUN ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
 WORKDIR /app
 
 ADD . /app
